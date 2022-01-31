@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { View, Text, Button, TextInput } from 'react-native';
+import { View, Text, Button, TextInput, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import logo from './assets/icon.png';
 
 function HomeScreen({ route, navigation }) {
 
@@ -16,10 +17,19 @@ function HomeScreen({ route, navigation }) {
       />
       <Button
         title="Go to Details"
-        onPress={() => 
+        onPress={() =>
           navigation.navigate('Details', {
             itemId: 86,
             otherParam: 'anything you want here',
+          })
+        }
+      />
+      <Button
+        title="Go to Profile"
+        onPress={() =>
+          navigation.navigate('Profile', {
+            name: 'Diana',
+            data: 'She is trouble... kind of...',
           })
         }
       />
@@ -27,7 +37,7 @@ function HomeScreen({ route, navigation }) {
   );
 }
 
-function CreatePostScreen({ route, navigation}) {
+function CreatePostScreen({ route, navigation }) {
   const [postText, setPostText] = useState('');
 
   return (
@@ -75,26 +85,70 @@ function DetailsScreen({ route, navigation }) {
   );
 }
 
+const ProfileScreen = ({ route, navigation }) => {
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>{`Data: ${route.params.data}`}</Text>
+      <Button
+        title="Update the title"
+        onPress={() => navigation.setOptions({ title: 'Updated!' })}
+      />
+    </View>
+  )
+}
+
+function LogoTitle(props) {
+  console.log(props)
+  return (
+    <View style={{flexDirection: 'row'}}>
+      <Image
+        style={{ width: 50, height: 50, marginRight: 10 }}
+        source={logo}
+      />
+      <Text style={{textAlign: 'center'}}>Details</Text>
+    </View>
+  );
+}
+
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: '#f4511e',
+          },
+          headerTintColor: '#fff',
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
+      >
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Overview' }}
+          options={{
+            title: 'Overview'
+          }}
         />
         <Stack.Screen
           name="Details"
           component={DetailsScreen}
-          options={{ title: 'Details' }}
+          options={{ headerTitle: (props) => <LogoTitle { ...props} /> }}
         />
         <Stack.Screen
           name="CreatePost"
           component={CreatePostScreen}
           options={{ title: 'Create Post' }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={({ route }) => ({ title: route.params.name })}
         />
       </Stack.Navigator>
     </NavigationContainer>
