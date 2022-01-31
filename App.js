@@ -1,16 +1,26 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useLayoutEffect } from 'react';
 import { View, Text, Button, TextInput, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import logo from './assets/icon.png';
 
 function HomeScreen({ route, navigation }) {
+  const [count, setCount] = useState(0);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button onPress={() => setCount(c => c + 1)} title="Update count" />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
       <Text>{`Post: ${route.params?.post || 'null'}`}</Text>
+      <Text>{`Count: ${count}`}</Text>
       <Button
         title="Create post"
         onPress={() => navigation.navigate('CreatePost')}
@@ -132,7 +142,14 @@ function App() {
           name="Home"
           component={HomeScreen}
           options={{
-            title: 'Overview'
+            headerTitle: 'Overview',
+            headerRight: () => (
+              <Button
+                onPress={() => alert('This is a button!')}
+                title="Info"
+                color="#fff"
+              />
+            ),
           }}
         />
         <Stack.Screen
